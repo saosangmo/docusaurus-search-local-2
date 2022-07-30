@@ -42,10 +42,6 @@ export interface HighlightChunk {
   textLength: number;
 }
 
-export interface ChunkIndexRef {
-  chunkIndex: number;
-}
-
 /**
  * properties of document is shorten for smaller serialized search index.
  */
@@ -142,9 +138,10 @@ export interface PluginOptions {
   docsRouteBasePath?: string | string[];
   blogRouteBasePath?: string | string[];
   language?: string | string[];
-  hashed?: boolean;
+  hashed?: boolean | "query" | "filename";
   docsDir?: string | string[];
   blogDir?: string | string[];
+  docsPluginIdForPreferredVersion?: string;
   removeDefaultStopWordFilter?: boolean;
   removeDefaultStemmer?: boolean;
   highlightSearchTermsOnTargetPage?: boolean;
@@ -155,6 +152,9 @@ export interface PluginOptions {
   explicitSearchResultPath?: boolean;
 
   ignoreFiles?: string | RegExp | (string | RegExp)[];
+
+  searchBarShortcut?: boolean;
+  searchBarShortcutHint?: boolean;
 
   // searchInputPlaceholder?: string;
   // searchNoResults?: string;

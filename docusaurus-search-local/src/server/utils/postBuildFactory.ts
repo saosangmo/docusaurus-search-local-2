@@ -9,7 +9,10 @@ import { scanDocuments } from "./scanDocuments";
 
 const writeFileAsync = util.promisify(fs.writeFile);
 
-export function postBuildFactory(config: ProcessedPluginOptions) {
+export function postBuildFactory(
+  config: ProcessedPluginOptions,
+  searchIndexFilename: string
+) {
   return async function postBuild(buildData: PostBuildData): Promise<void> {
     debugInfo("gathering documents");
 
@@ -17,7 +20,7 @@ export function postBuildFactory(config: ProcessedPluginOptions) {
 
     debugInfo("parsing documents");
 
-    for (let versionData of data) {
+    for (const versionData of data) {
       // Give every index entry a unique id so that the index does not need to store long URLs.
       const allDocuments = await scanDocuments(versionData.paths);
 
@@ -28,7 +31,7 @@ export function postBuildFactory(config: ProcessedPluginOptions) {
       debugInfo("writing index to disk");
 
       await writeFileAsync(
-        path.join(versionData.outDir, "search-index.json"),
+        path.join(versionData.outDir, searchIndexFilename),
         JSON.stringify(searchIndex),
         { encoding: "utf8" }
       );

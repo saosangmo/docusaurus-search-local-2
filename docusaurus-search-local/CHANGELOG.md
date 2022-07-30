@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.30.2](https://github.com/easyops-cn/docusaurus-search-local/compare/v0.30.1...v0.30.2) (2022-07-23)
+
+
+### Bug Fixes
+
+* remove useDocsPreferredVersion error log entirely ([56f5ab5](https://github.com/easyops-cn/docusaurus-search-local/commit/56f5ab51a77f682c565d357bcbf7a37567c2b21e))
+* use debug instead of console.error for useDocsPreferredVersion message ([3a09e39](https://github.com/easyops-cn/docusaurus-search-local/commit/3a09e39ef569a9dd1d99b1e251fdc79f909cff0f))
+
+## [0.30.1](https://github.com/easyops-cn/docusaurus-search-local/compare/v0.30.0...v0.30.1) (2022-07-22)
+
+
+### Bug Fixes
+
+* fix building error when docs disabled ([07b1724](https://github.com/easyops-cn/docusaurus-search-local/commit/07b17245ff526783dfc1469de91928d5a64bb909))
+
+## [0.30.0](https://github.com/easyops-cn/docusaurus-search-local/compare/v0.29.4...v0.30.0) (2022-07-22)
+
+
+### Features
+
+* support saving hash in filename instead of query ([4930a88](https://github.com/easyops-cn/docusaurus-search-local/commit/4930a88779813ffcaa932a56f786066f969aff6e)), closes [#171](https://github.com/easyops-cn/docusaurus-search-local/issues/171)
+
+## [0.29.4](https://github.com/easyops-cn/docusaurus-search-local/compare/v0.29.3...v0.29.4) (2022-07-22)
+
+
+### Bug Fixes
+
+* fix call stack overflow with large code blocks ([e0b2cfd](https://github.com/easyops-cn/docusaurus-search-local/commit/e0b2cfd6e21f008609a85c42c0159ae25b575d6b)), closes [#164](https://github.com/easyops-cn/docusaurus-search-local/issues/164)
+
+## [0.29.3](https://github.com/easyops-cn/docusaurus-search-local/compare/v0.29.2...v0.29.3) (2022-07-20)
+
+
+### Bug Fixes
+
+* hide clear button on small screen when input is not focused ([c69fbf6](https://github.com/easyops-cn/docusaurus-search-local/commit/c69fbf64ff6ba11c32e63d89dada010bb1e521dc)), closes [#230](https://github.com/easyops-cn/docusaurus-search-local/issues/230)
+
+## [0.29.2](https://github.com/easyops-cn/docusaurus-search-local/compare/v0.29.1...v0.29.2) (2022-07-19)
+
+
+### Bug Fixes
+
+* fix website with docs multi-instance ([f61304e](https://github.com/easyops-cn/docusaurus-search-local/commit/f61304e5f3318388d56c1ef791881cd3e3c6e331)), closes [#211](https://github.com/easyops-cn/docusaurus-search-local/issues/211)
+
+## [0.29.1](https://github.com/easyops-cn/docusaurus-search-local/compare/v0.29.0...v0.29.1) (2022-07-19)
+
+
+### Bug Fixes
+
+* require docusaurus v2.0.0-rc.1 ([41a4e67](https://github.com/easyops-cn/docusaurus-search-local/commit/41a4e67543b03f4166589da84cac76a196488e3d))
+* add hack for useDocsPreferredVersion crash in SearchPage ([02fdc42](https://github.com/easyops-cn/docusaurus-search-local/commit/02fdc42a043a4cc1d3fafe9705b478e883543d2b))
+* fix error when not using versions ([f11293f](https://github.com/easyops-cn/docusaurus-search-local/commit/f11293f78c111948c3ea3b8c25a8bb782304ee93))
+
+## [0.29.0](https://github.com/easyops-cn/docusaurus-search-local/compare/v0.28.0...v0.29.0) (2022-07-07)
+
+
+### Features
+
+* support disabling search bar shortcut ([e0ea5ae](https://github.com/easyops-cn/docusaurus-search-local/commit/e0ea5aeab027724083b0f51290d6ea7e4bc89fa6))
+* support hiding search bar shortcut hint ([9344bd2](https://github.com/easyops-cn/docusaurus-search-local/commit/9344bd20e16c3dd60b3d59fc918dca10e8cfd48f))
+
 ## [0.28.0](https://github.com/easyops-cn/docusaurus-search-local/compare/v0.27.2...v0.28.0) (2022-06-28)
 
 

@@ -2,15 +2,17 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "start": "yarn workspaces foreach -vp run start",
+    "start": "yarn workspaces foreach --exclude website-multi-docs -vp run start",
     "start:theme": "yarn workspace @easyops-cn/docusaurus-search-local run start",
     "start:website": "yarn workspace website run start",
-    "build": "yarn workspaces foreach -tvp run build",
-    "build:i18n": "cross-env BUILD_TYPE='i18n' yarn workspaces foreach -tvp run build",
-    "build:preview": "cross-env BUILD_TYPE='preview' yarn workspaces foreach -tvp run build",
+    "build": "yarn workspaces foreach --exclude website-multi-docs -tvp run build",
+    "build:i18n": "cross-env BUILD_TYPE='i18n' yarn workspaces foreach --exclude website-multi-docs -tvp run build",
+    "build:preview": "cross-env BUILD_TYPE='preview' yarn workspaces foreach --exclude website-multi-docs -tvp run build",
     "build:theme": "yarn workspace @easyops-cn/docusaurus-search-local run build",
     "build:website": "yarn workspace website run build",
+    "build:website-multi-docs": "yarn workspace website-multi-docs run build",
     "serve": "yarn workspace website run serve",
+    "serve:website-multi-docs": "yarn workspace website-multi-docs run serve",
     "test": "cross-env NODE_ENV='test' jest",
     "prepare": "husky install",
     "lint-staged": "lint-staged"
@@ -34,17 +36,19 @@
     "jest-environment-jsdom": "^28.1.0",
     "lint-staged": "^13.0.0",
     "prettier": "^2.6.2",
-    "typescript": "^4.6.4"
+    "typescript": "^4.7.4"
   },
   "workspaces": [
     "docusaurus-search-local",
-    "website"
+    "website",
+    "website-multi-docs"
   ],
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.2",
   "resolutions": {
-    "@docusaurus/core": "2.0.0-beta.20",
-    "@docusaurus/preset-classic": "2.0.0-beta.20",
-    "@docusaurus/theme-classic": "2.0.0-beta.20",
-    "@docusaurus/theme-common": "2.0.0-beta.20"
+    "@docusaurus/core": "2.0.0-rc.1",
+    "@docusaurus/preset-classic": "2.0.0-rc.1",
+    "@docusaurus/theme-classic": "2.0.0-rc.1",
+    "@docusaurus/theme-common": "2.0.0-rc.1",
+    "@docusaurus/plugin-content-docs": "2.0.0-rc.1"
   }
 }

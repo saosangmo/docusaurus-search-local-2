@@ -3,7 +3,7 @@ import path from "path";
 import { ProcessedPluginOptions } from "../../shared/interfaces";
 import { getIndexHash } from "./getIndexHash";
 
-export function generate(config: ProcessedPluginOptions, dir: string): void {
+export function generate(config: ProcessedPluginOptions, dir: string): string {
   const {
     language,
     removeDefaultStopWordFilter,
@@ -12,6 +12,10 @@ export function generate(config: ProcessedPluginOptions, dir: string): void {
     searchResultLimits,
     searchResultContextMaxLength,
     explicitSearchResultPath,
+    searchBarShortcut,
+    searchBarShortcutHint,
+    docsPluginIdForPreferredVersion,
+    indexDocs,
   } = config;
   const indexHash = getIndexHash(config);
   const contents: string[] = [
@@ -72,7 +76,21 @@ export function generate(config: ProcessedPluginOptions, dir: string): void {
   } else {
     contents.push("export const Mark = null;");
   }
-  contents.push(`export const indexHash = ${JSON.stringify(indexHash)};`);
+
+  let searchIndexFilename = "search-index.json";
+  let searchIndexQuery = "";
+
+  if (indexHash) {
+    if (config.hashed === "filename") {
+      searchIndexFilename = `search-index-${indexHash}.json`;
+    } else {
+      searchIndexQuery = `?_=${indexHash}`;
+    }
+  }
+  const searchIndexUrl = searchIndexFilename + searchIndexQuery;
+  contents.push(
+    `export const searchIndexUrl = ${JSON.stringify(searchIndexUrl)};`
+  );
   contents.push(
     `export const searchResultLimits = ${JSON.stringify(searchResultLimits)};`,
     `export const searchResultContextMaxLength = ${JSON.stringify(
@@ -84,6 +102,24 @@ export function generate(config: ProcessedPluginOptions, dir: string): void {
       explicitSearchResultPath
     )};`
   );
+  contents.push(
+    `export const searchBarShortcut = ${JSON.stringify(searchBarShortcut)};`
+  );
+  contents.push(
+    `export const searchBarShortcutHint = ${JSON.stringify(
+      searchBarShortcutHint
+    )};`
+  );
+  contents.push(
+    `export const docsPluginIdForPreferredVersion = ${
+      docsPluginIdForPreferredVersion === undefined
+        ? "undefined"
+        : JSON.stringify(docsPluginIdForPreferredVersion)
+    };`
+  );
+  contents.push(`export const indexDocs = ${JSON.stringify(indexDocs)};`);
 
   fs.writeFileSync(path.join(dir, "generated.js"), contents.join("\n"));
+
+  return searchIndexFilename;
 }

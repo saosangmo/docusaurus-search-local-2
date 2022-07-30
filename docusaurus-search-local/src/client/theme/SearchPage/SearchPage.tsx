@@ -7,6 +7,7 @@ import { translate } from "@docusaurus/Translate";
 import {
   usePluralForm,
   useDocsPreferredVersion,
+  ReactContextError,
 } from "@docusaurus/theme-common";
 import { useActivePlugin } from "@docusaurus/plugin-content-docs/client";
 
@@ -18,9 +19,13 @@ import { highlight } from "../../utils/highlight";
 import { highlightStemmed } from "../../utils/highlightStemmed";
 import { getStemmedPositions } from "../../utils/getStemmedPositions";
 import LoadingRing from "../LoadingRing/LoadingRing";
+import { concatDocumentPath } from "../../utils/concatDocumentPath";
+import {
+  docsPluginIdForPreferredVersion,
+  indexDocs,
+} from "../../utils/proxiedGenerated";
 
 import styles from "./SearchPage.module.css";
-import { concatDocumentPath } from "../../utils/concatDocumentPath";
 
 export default function SearchPage(): React.ReactElement {
   return (
@@ -40,9 +45,25 @@ function SearchPageContent(): React.ReactElement {
   let versionUrl = baseUrl;
 
   // There is an issue, see `SearchBar.tsx`.
-  const { preferredVersion } = useDocsPreferredVersion(activePlugin?.pluginId);
-  if (preferredVersion && !preferredVersion.isLast) {
-    versionUrl = preferredVersion.path + "/";
+  try {
+    // The try-catch is a hack because useDocsPreferredVersion just throws an
+    // exception when versions are not used.
+    // The same hack is used in SearchBar.tsx
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { preferredVersion } = useDocsPreferredVersion(
+      activePlugin?.pluginId ?? docsPluginIdForPreferredVersion
+    );
+    if (preferredVersion && !preferredVersion.isLast) {
+      versionUrl = preferredVersion.path + "/";
+    }
+  } catch (e: unknown) {
+    if (indexDocs) {
+      if (e instanceof ReactContextError) {
+        /* ignore, happens when website doesn't use versions */
+      } else {
+        throw e;
+      }
+    }
   }
   const { selectMessage } = usePluralForm();
   const { searchValue, updateSearchPath } = useSearchQuery();

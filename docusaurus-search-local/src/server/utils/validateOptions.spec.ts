@@ -16,7 +16,13 @@ describe("validateOptions", () => {
     return value;
   }
 
-  test.each<[PluginOptions | undefined, Required<PluginOptions>]>([
+  test.each<
+    [
+      PluginOptions | undefined,
+      PluginOptions &
+        Required<Omit<PluginOptions, "docsPluginIdForPreferredVersion">>
+    ]
+  >([
     [
       undefined,
       {
@@ -36,6 +42,8 @@ describe("validateOptions", () => {
         explicitSearchResultPath: false,
         searchResultContextMaxLength: 50,
         ignoreFiles: [],
+        searchBarShortcut: true,
+        searchBarShortcutHint: true,
       },
     ],
     [
@@ -57,6 +65,8 @@ describe("validateOptions", () => {
         explicitSearchResultPath: false,
         searchResultContextMaxLength: 50,
         ignoreFiles: "file1",
+        searchBarShortcut: true,
+        searchBarShortcutHint: true,
       },
     ],
     [
@@ -78,6 +88,8 @@ describe("validateOptions", () => {
         explicitSearchResultPath: false,
         searchResultContextMaxLength: 50,
         ignoreFiles: [/__meta__$/, "file1"],
+        searchBarShortcut: true,
+        searchBarShortcutHint: true,
       },
     ],
     [
@@ -99,6 +111,8 @@ describe("validateOptions", () => {
         explicitSearchResultPath: false,
         searchResultContextMaxLength: 50,
         ignoreFiles: [],
+        searchBarShortcut: true,
+        searchBarShortcutHint: true,
       },
     ],
     [
@@ -110,6 +124,7 @@ describe("validateOptions", () => {
         searchResultLimits: 5,
         explicitSearchResultPath: false,
         searchResultContextMaxLength: 30,
+        searchBarShortcut: false,
       },
       {
         blogRouteBasePath: ["blog"],
@@ -128,19 +143,23 @@ describe("validateOptions", () => {
         explicitSearchResultPath: false,
         searchResultContextMaxLength: 30,
         ignoreFiles: [],
+        searchBarShortcut: false,
+        searchBarShortcutHint: true,
       },
     ],
     [
       {
         docsRouteBasePath: "/dev/docs",
         blogRouteBasePath: "/dev/blog",
+        searchBarShortcutHint: false,
+        hashed: true,
       },
       {
         blogRouteBasePath: "/dev/blog",
         blogDir: ["blog"],
         docsRouteBasePath: "/dev/docs",
         docsDir: ["docs"],
-        hashed: false,
+        hashed: true,
         indexBlog: true,
         indexDocs: true,
         indexPages: false,
@@ -152,19 +171,23 @@ describe("validateOptions", () => {
         explicitSearchResultPath: false,
         searchResultContextMaxLength: 50,
         ignoreFiles: [],
+        searchBarShortcut: true,
+        searchBarShortcutHint: false,
       },
     ],
     [
       {
         docsRouteBasePath: ["/dev/docs"],
         blogRouteBasePath: ["/dev/blog"],
+        docsPluginIdForPreferredVersion: "product",
+        hashed: "filename",
       },
       {
         blogRouteBasePath: ["/dev/blog"],
         blogDir: ["blog"],
         docsRouteBasePath: ["/dev/docs"],
         docsDir: ["docs"],
-        hashed: false,
+        hashed: "filename",
         indexBlog: true,
         indexDocs: true,
         indexPages: false,
@@ -176,6 +199,9 @@ describe("validateOptions", () => {
         explicitSearchResultPath: false,
         searchResultContextMaxLength: 50,
         ignoreFiles: [],
+        searchBarShortcut: true,
+        searchBarShortcutHint: true,
+        docsPluginIdForPreferredVersion: "product",
       },
     ],
   ])("validateOptions(...) should work", (options, config) => {

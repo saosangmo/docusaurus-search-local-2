@@ -10,7 +10,10 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import { useHistory, useLocation } from "@docusaurus/router";
 import { translate } from "@docusaurus/Translate";
-import { useDocsPreferredVersion } from "@docusaurus/theme-common";
+import {
+  ReactContextError,
+  useDocsPreferredVersion,
+} from "@docusaurus/theme-common";
 import { useActivePlugin } from "@docusaurus/plugin-content-docs/client";
 
 import { fetchIndexes } from "./fetchIndexes";
@@ -18,7 +21,14 @@ import { SearchSourceFactory } from "../../utils/SearchSourceFactory";
 import { SuggestionTemplate } from "./SuggestionTemplate";
 import { EmptyTemplate } from "./EmptyTemplate";
 import { SearchResult } from "../../../shared/interfaces";
-import { searchResultLimits, Mark } from "../../utils/proxiedGenerated";
+import {
+  searchResultLimits,
+  Mark,
+  searchBarShortcut,
+  searchBarShortcutHint,
+  docsPluginIdForPreferredVersion,
+  indexDocs,
+} from "../../utils/proxiedGenerated";
 import LoadingRing from "../LoadingRing/LoadingRing";
 
 import styles from "./SearchBar.module.css";
@@ -58,9 +68,25 @@ export default function SearchBar({
   // this will throw an error of:
   //   > Docusaurus plugin global data not found for "docusaurus-plugin-content-docs" plugin with id "default".
   // It seems that we can not get the correct id for non-docs pages.
-  const { preferredVersion } = useDocsPreferredVersion(activePlugin?.pluginId);
-  if (preferredVersion && !preferredVersion.isLast) {
-    versionUrl = preferredVersion.path + "/";
+  try {
+    // The try-catch is a hack because useDocsPreferredVersion just throws an
+    // exception when versions are not used.
+    // The same hack is used in SearchPage.tsx
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { preferredVersion } = useDocsPreferredVersion(
+      activePlugin?.pluginId ?? docsPluginIdForPreferredVersion
+    );
+    if (preferredVersion && !preferredVersion.isLast) {
+      versionUrl = preferredVersion.path + "/";
+    }
+  } catch (e: unknown) {
+    if (indexDocs) {
+      if (e instanceof ReactContextError) {
+        /* ignore, happens when website doesn't use versions */
+      } else {
+        throw e;
+      }
+    }
   }
   const history = useHistory();
   const location = useLocation();
@@ -205,13 +231,17 @@ export default function SearchBar({
     });
   }, [location.search, location.pathname]);
 
+  const [focused, setFocused] = useState(false);
+
   const onInputFocus = useCallback(() => {
     focusAfterIndexLoaded.current = true;
     loadIndex();
+    setFocused(true);
     handleSearchBarToggle?.(true);
   }, [handleSearchBarToggle, loadIndex]);
 
   const onInputBlur = useCallback(() => {
+    setFocused(false);
     handleSearchBarToggle?.(false);
   }, [handleSearchBarToggle]);
 
@@ -237,14 +267,17 @@ export default function SearchBar({
     : false;
 
   useEffect(() => {
+    if (!searchBarShortcut) {
+      return;
+    }
     // Add shortcuts command/ctrl + K
-    function handleShortcut(event: KeyboardEvent): void {
+    const handleShortcut = (event: KeyboardEvent): void => {
       if ((isMac ? event.metaKey : event.ctrlKey) && event.code === "KeyK") {
         event.preventDefault();
         searchBarRef.current?.focus();
         onInputFocus();
       }
-    }
+    };
 
     document.addEventListener("keydown", handleShortcut);
     return () => {
@@ -273,6 +306,7 @@ export default function SearchBar({
     <div
       className={clsx("navbar__search", styles.searchBarContainer, {
         [styles.searchIndexLoading]: loading && inputChanged,
+        [styles.focused]: focused,
       })}
     >
       <input
@@ -291,16 +325,18 @@ export default function SearchBar({
         value={inputValue}
       />
       <LoadingRing className={styles.searchBarLoadingRing} />
-      {inputValue !== "" ? (
-        <button className={styles.searchClearButton} onClick={onClearSearch}>
-          ✕
-        </button>
-      ) : (
-        <div className={styles.searchHintContainer}>
-          <kbd className={styles.searchHint}>{isMac ? "⌘" : "ctrl"}</kbd>
-          <kbd className={styles.searchHint}>K</kbd>
-        </div>
-      )}
+      {searchBarShortcut &&
+        searchBarShortcutHint &&
+        (inputValue !== "" ? (
+          <button className={styles.searchClearButton} onClick={onClearSearch}>
+            ✕
+          </button>
+        ) : (
+          <div className={styles.searchHintContainer}>
+            <kbd className={styles.searchHint}>{isMac ? "⌘" : "ctrl"}</kbd>
+            <kbd className={styles.searchHint}>K</kbd>
+          </div>
+        ))}
     </div>
   );
 }
